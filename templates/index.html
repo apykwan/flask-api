@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Page</title>
+</head>
+<body>
+  <h1>Hello World</h1>
+  <p>{{first_name}}</p>
+  <p>{{stuff|safe}}</p>
+  <h3>Favorite Pizza</h3>
+  <ul>
+    {% for topping in favorite_pizza %}
+      {% if topping == "cheese" %}
+        <span style="color: crimson">Chef Favorite</span>
+      {% endif %}
+      <li>{{ topping }}</li>
+    {% endfor %}
+  </ul>
+
+  <strong>{{ favorite_pizza.1|reverse }}</strong>
+  
+</body>
+</html>
