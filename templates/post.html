@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message }}
+  </div>
+{% endfor %}
+  <h1 class="mb-3">Blog Posts...</h1>
+  <div class="card shadow rounded py-3 px-5 mt-5 w-100">
+    <div class="card-body d-flex flex-column">
+      <h3 class="card-title">{{ post.title }}</h3>
+      <h6 class="card-subtitle mb-4 text-muted">{{ post.slug }}</h6>
+      <p class="card-text flex-grow-1 bg-body">{{ post.content }}</p>
+      <h5 class="d-flex justify-content-end text-primary">By {{ post.author|capitalize }}</h5>
+    </div>
+  </div>
+
+  <div class="container my-5 ps-0">
+    <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-secondary btn-sm p-2 me-2">Edit Post</a>
+    <a href="{{ url_for('delete_post', id=post.id) }}" class="btn btn-danger btn-sm p-2 me-2">Delete Post</a>
+    <a href="{{ url_for('posts') }}" class="btn btn-outline-secondary btn-sm p-2">Back to Blog</a>
+  </div>
+{% endblock %}

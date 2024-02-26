@@ -1,24 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<title>{{title}}</title>
-</head>
-
-<body>
-  <div class="container">
-    <h1>Hello World</h1>
-    <p>{{first_name}}</p>
-    <p>{{stuff|safe}}</p>
-    <h3>Favorite Pizza</h3>
-    <ul>
-      {% for topping in favorite_pizza %}
-      {% if topping == "cheese" %}
-      <span style="color: crimson">Chef Favorite</span>
-      {% endif %}
-      <li>{{ topping }}</li>
-      {% endfor %}
-    </ul>
-    
-    <strong>{{ favorite_pizza.1|reverse }}</strong>
-  </div>
+  <h1>Hello World</h1>
+  <p>{{first_name}}</p>
+  <p>{{stuff|safe}}</p>
+  <h3>Favorite Pizza</h3>
+  <ul style="list-style: none">
+    {% for topping in favorite_pizza %}
+    {% if topping == "cheese" %}
+    <span style="color: crimson">Chef Favorite</span>
+    {% endif %}
+    <li>{{ topping }}</li>
+    {% endfor %}
+  </ul>
+  
+  <strong>{{ favorite_pizza.1|reverse }}</strong>
 {% endblock %}

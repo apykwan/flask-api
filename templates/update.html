@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    Hi {{ name_to_update.name|capitalize }}, {{ message }}
+  </div>
+{% endfor %}
+
+{% if name_to_update.name %}
+  <h1>Update User...</h1>
+  <br />
+  <div class="shadow p-3 mb-5 bg-body rounded w-50">
+    <form action="/update/{{name_to_update.id}}" method="POST" class="p-5">
+      {{ form.hidden_tag() }}
+  
+      {{ form.name.label(class="form-label") }}
+      {{ form.name(class="form-control mb-3", value=name_to_update.name) }}
+  
+      {{ form.email.label(class="form-label") }}
+      {{ form.email(class="form-control mb-3", value=name_to_update.email) }}
+
+      {{ form.favorite_color.label(class="form-label") }}
+      {{ form.favorite_color(class="form-control mb-3", value=name_to_update.favorite_color) }}
+      
+      <div class="d-flex w-100 mt-2">
+        {{ form.submit(class="btn btn-outline-secondary flex-grow-1 p-2") }}
+        <a class="ms-3 btn btn-danger" href="{{ url_for('delete', id=name_to_update.id) }}">X</a>
+      </div>
+      
+    </form>
+  </div>
+
+{% else %}
+  <div class="container text-center">
+    <h1 class="text-danger">User Cannot Be Found!!!</h1>
+    <a href="/">Go Back to Main Page</a>
+  </div>
+  
+{% endif %}
+
+{% endblock %}
