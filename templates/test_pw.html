@@ -21,7 +21,7 @@
 {% else %}
   <h1>What's Your Email and Password?</h1>
   <br />
-  <form method="POST" class="w-50">
+  <form action="/dashboard" method="POST" class="w-50" role="dash-update">
     {{ form.hidden_tag() }}
     {{ form.email.label(class="form-label") }}
     {{ form.email(class="form-control mb-3") }}

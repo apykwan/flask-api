@@ -7,7 +7,54 @@
     {{ message }}
   </div>
 {% endfor %}
+{% if current_user.is_authenticated %}
+  <h2 class="mb-5">Welcome to User Dashboard</h2>
+  
+  <div class="container d-flex flex-column align-items-center">
+    <div class="card w-50">
+      <div class="card-header">
+        <h3 class="text-secondary text-center">{{ current_user.username|upper }}</h3>
+      </div>
+      <div class="card-body">
+        <p class="card-text p-3">
+          <strong class="d-block mb-2">Name: {{ current_user.name }}</strong>
+          <strong class="d-block mb-2">Email: {{ current_user.email }}</strong>
+          <strong class="d-block mb-2">Favorite Color: {{ current_user.favorite_color }}</strong>
+          <strong class="d-block mb-2">Date Join: {{ current_user.date_added }}</strong>
+        </p>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <a href="{{ url_for('update', id=current_user.id)}}" class="btn btn-outline-secondary w-50">Update Profile</a>
+        <a href="{{ url_for('delete', id=current_user.id)}}" class="btn btn-outline-danger w-50 mx-3">Delete Profile</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-dark w-50">Logout</a>
+      </div>
+    </div>
 
-  <h1 class="mb-3">Dashboard</h1>
-  <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+    <div class="card w-50 my-3">
+      <div class="card-header">
+        <h3 class="text-secondary text-center">UPDATE FORM</h3>
+      </div>
+      <div class="card-body opcity-0">
+        <form action="/update/{{current_user.id}}" method="POST" class="p-2">
+          {{ form.hidden_tag() }}
+        
+          {{ form.name.label(class="form-label") }}
+          {{ form.name(class="form-control mb-3", value=current_user.name) }}
+        
+          {{ form.username.label(class="form-label") }}
+          {{ form.username(class="form-control mb-3", value=current_user.username) }}
+        
+          {{ form.email.label(class="form-label") }}
+          {{ form.email(class="form-control mb-3", value=current_user.email) }}
+        
+          {{ form.favorite_color.label(class="form-label") }}
+          {{ form.favorite_color(class="form-control mb-3", value=current_user.favorite_color) }}
+        
+          {{ form.submit(class="btn btn-outline-secondary w-100 mt-2 p-2") }}
+        </form>
+      </div>
+    </div>
+  </div>
+  
+{% endif %}
 {% endblock %}

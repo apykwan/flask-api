@@ -13,7 +13,7 @@
       <h3 class="card-title">{{ post.title }}</h3>
       <h6 class="card-subtitle mb-4 text-muted">{{ post.slug }}</h6>
       <p class="card-text flex-grow-1 bg-body">{{ post.content }}</p>
-      <h5 class="d-flex justify-content-end text-primary">By {{ post.author|capitalize }}</h5>
+      <h5 class="d-flex justify-content-end text-primary">By {{ post.poster.name|capitalize }}</h5>
     </div>
   </div>
 

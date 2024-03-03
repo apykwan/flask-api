@@ -8,15 +8,18 @@
   </div>
 {% endfor %}
 
-{% if name_to_update.name %}
-  <h1>Update User...</h1>
-  <br />
+{% if name_to_update.name and id == current_user.id %}
+  <h1 class="mb-3">Update User...</h1>
+
   <div class="shadow p-3 mb-5 bg-body rounded w-50">
     <form action="/update/{{name_to_update.id}}" method="POST" class="p-5">
       {{ form.hidden_tag() }}
   
       {{ form.name.label(class="form-label") }}
       {{ form.name(class="form-control mb-3", value=name_to_update.name) }}
+
+      {{ form.username.label(class="form-label") }}
+      {{ form.username(class="form-control mb-3", value=name_to_update.username) }}
   
       {{ form.email.label(class="form-label") }}
       {{ form.email(class="form-control mb-3", value=name_to_update.email) }}
@@ -34,7 +37,8 @@
 
 {% else %}
   <div class="container text-center">
-    <h1 class="text-danger">User Cannot Be Found!!!</h1>
+    <h1 class="text-danger mb-3">Access Denied!!!</h1>
+    <h5 class="text-secondary mb-3">Either user is not found or you are not authorized!</h5>
     <a href="/">Go Back to Main Page</a>
   </div>
   
