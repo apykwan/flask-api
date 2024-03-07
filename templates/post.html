@@ -18,8 +18,10 @@
   </div>
 
   <div class="container my-5 ps-0">
-    <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-secondary btn-sm p-2 me-2">Edit Post</a>
-    <a href="{{ url_for('delete_post', id=post.id) }}" class="btn btn-danger btn-sm p-2 me-2">Delete Post</a>
+    {% if current_user.id == post.poster.id %}
+      <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-secondary btn-sm p-2 me-2">Edit Post</a>
+      <a href="{{ url_for('delete_post', id=post.id) }}" class="btn btn-danger btn-sm p-2 me-2">Delete Post</a>
+    {% endif %}
     <a href="{{ url_for('posts') }}" class="btn btn-outline-secondary btn-sm p-2">Back to Blog</a>
   </div>
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 
 {% for message in get_flashed_messages() %}
@@ -19,15 +18,15 @@
             <small class="d-flex justify-content-end text-primary">By {{ post.poster.name|capitalize }}</small>
             <div class="d-flex justify-content-start mt-3">
               <a href="{{ url_for('post', id=post.id) }}" class="py-2 btn btn-secondary btn-sm my-2 me-3">View Post</a>
-              <a href="{{ url_for('edit_post', id=post.id) }}" class="py-2 btn btn-outline-secondary btn-sm my-2 me-3">Edit Post</a>
-              <a href="{{ url_for('delete_post', id=post.id) }}" class="py-2 btn btn-danger btn-sm my-2">Delete Post</a>
+              {% if current_user.id == post.poster.id %}
+                <a href="{{ url_for('edit_post', id=post.id) }}" class="py-2 btn btn-outline-secondary btn-sm my-2 me-3">Edit Post</a>
+                <a href="{{ url_for('delete_post', id=post.id) }}" class="py-2 btn btn-danger btn-sm my-2">Delete Post</a>
+              {% endif %}
             </div>
           </div>
         </div>
       {% endfor %}
     </div>
-   
   </div>
   
-
 {% endblock %}

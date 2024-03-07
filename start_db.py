@@ -1,4 +1,4 @@
-from server import db, app
+88from server import db, app
 # import mysql.connector
 
 
@@ -13,7 +13,7 @@ from server import db, app
 # my_cursor.execute("SHOW DATABASES")
 # for db in my_cursor:
 #   print(db)
-
+888
 
 with app.app_context():
   db.create_all()
