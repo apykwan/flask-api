@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from datetime import date
 from flask_login import UserMixin, login_user, login_required, LoginManager, logout_user, current_user
 
-from webforms import UserForm, PostForm, LoginForm, NameForm, PasswordForm
+from webforms import UserForm, PostForm, LoginForm, NameForm, PasswordForm, SearchForm
 
 # Create a flask instance
 app = Flask(__name__)
@@ -40,6 +40,26 @@ def get_current_date():
     "Tim": "Mushroom"
   }
   return favorite_pizza, 200
+
+# Pass Stuff to Navbar
+@app.context_processor
+def base():
+	form = SearchForm()
+	return dict(form=form)
+
+# Create Search Function
+@app.route('/search', methods=["POST"])
+def search():
+  form = SearchForm()
+  posts = Posts.query
+  if form.validate_on_submit():
+    # Get data from submitted
+    post.searched = form.searched.data
+    # Query the Database
+    posts = posts.filter(Posts.content.like(f"%{post.searched}%"))
+    posts = posts.order_by(Posts.title).all()
+
+    return render_template('search.html', form=form, searched=post.searched, posts=posts)
   
 # Create Login Page
 @app.route('/login', methods=['GET', 'POST'])
