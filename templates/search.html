@@ -2,10 +2,37 @@
 {% block content %}
 
   <h2 class="mt-2">You Searched For...</h2>
-  <p class="mb-3">{{ searched }}</p>
+  <p class="mb-3"><em>{{ searched }}</em></p>
 
-  {% for post in posts %}
-    <a href="{{ url_for('post', id=post.id) }}" class="mb-2">{{ post.title }}</a>
-  {% endfor %}
+  {% if posts %}
+    {% for post in posts %}
+      <div class="container">
+        <div class="row">
+          {% for post in posts %}
+          <div class="card col-md-4 my-2 mx-md-2 shadow rounded">
+            <div class="card-body d-flex flex-column">
+              <h3 class="card-title text-truncate">
+                <a href="{{ url_for('post', id=post.id) }}" class="mb-2">{{ post.title }}</a>
+              </h3>
+              <h6 class="card-subtitle mb-4 text-muted">{{ post.slug }}</h6>
+              <p class="card-text text-truncate flex-grow-1 bg-body">{{ post.content | safe }}</p>
+              <small class="d-flex justify-content-end text-primary">By {{ post.poster.name|capitalize }}</small>
+              <div class="d-flex justify-content-start mt-3">
+                <a href="{{ url_for('post', id=post.id) }}" class="py-2 btn btn-secondary btn-sm my-2 me-3">View Post</a>
+                {% if current_user.id == post.poster.id %}
+                <a href="{{ url_for('edit_post', id=post.id) }}" class="py-2 btn btn-outline-secondary btn-sm my-2 me-3">Edit
+                  Post</a>
+                <a href="{{ url_for('delete_post', id=post.id) }}" class="py-2 btn btn-danger btn-sm my-2">Delete Post</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+    {% endfor %}
 
+  {% else %}
+    Sorr, your search term: <strong>{{ searched }} was not found...</strong>
+
+  {% endif %}
 {% endblock %}

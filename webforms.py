@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
+from flask_ckeditor import CKEditorField
+from flask_wtf.file import FileField
 
 # Create a Search Form
 class SearchForm(FlaskForm):
@@ -17,7 +19,8 @@ class LoginForm(FlaskForm):
 # Create a Posts Form
 class PostForm(FlaskForm):
   title = StringField("Title", validators=[DataRequired()])
-  content = StringField("Content", widget=TextArea(), validators=[DataRequired()])
+  content = CKEditorField('Content', validators=[DataRequired()])
+  # content = StringField("Content", widget=TextArea(), validators=[DataRequired()])
   slug = StringField("Slug", validators=[DataRequired()])
   submit = SubmitField("Submit")
 
@@ -27,8 +30,10 @@ class UserForm(FlaskForm):
   name = StringField("Enter your Name", validators=[DataRequired()])
   email = StringField("Enter your Email", validators=[DataRequired()])
   favorite_color = StringField("Enter Favorite Color")
+  about_author = TextAreaField("About Author")
   password_hash = PasswordField('Enter Password', validators=[DataRequired(), EqualTo('password_hash2', message='Passwords must be matched')])
   password_hash2 = PasswordField('Confirm Password', validators=[DataRequired()])
+  profile_pic = FileField("Profile Pic")
   submit = SubmitField("Submit")
 
 # Create a Form Class

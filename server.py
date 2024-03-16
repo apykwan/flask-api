@@ -6,11 +6,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import date
 from flask_login import UserMixin, login_user, login_required, LoginManager, logout_user, current_user
-
+from flask_ckeditor import CKEditor
 from webforms import UserForm, PostForm, LoginForm, NameForm, PasswordForm, SearchForm
+from werkzeug.utils import secure_filename
+import uuid as uuid
+import os
 
 # Create a flask instance
 app = Flask(__name__)
+
+# Add CKEditor
+ckeditor = CKEditor(app)
+
 # Add Database
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:taipei@localhost/users"
@@ -18,6 +25,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:taipei@localhost/u
 # Secret Key
 app.config['SECRET_KEY'] = "my sECRet key blAh Blah blaH"
 # Intialize the Database
+
+UPLOAD_FOLDER = 'static/images/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 db = SQLAlchemy()
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -60,6 +71,9 @@ def search():
     posts = posts.order_by(Posts.title).all()
 
     return render_template('search.html', form=form, searched=post.searched, posts=posts)
+  else:
+    flash('Invalid search')
+    return redirect(url_for('index'))
   
 # Create Login Page
 @app.route('/login', methods=['GET', 'POST'])
@@ -113,6 +127,16 @@ def add_post():
 
   # Redirect to the webpage
   return render_template("add_post.html", form=form)
+
+# Create Admin page
+@app.route('/admin')
+def admin():
+  id = current_user.id
+  if id == 'user62f578a5dba711eeb158448a5bd5f843':
+    return render_template("admin.html")
+  else:
+    flash("You you must be Admin to access the Admin Page")
+    return redirect(url_for('dashboard'))
 
 @app.route('/posts/<id>')
 def post(id):
@@ -178,7 +202,6 @@ def delete_post(id):
 def add_user():
   name = None
   form = UserForm()
-  
   # Validate Form
   if form.validate_on_submit():
     user = Users.query.filter_by(email=form.email.data).first()
@@ -215,6 +238,7 @@ def update(id):
     name_to_update.email = request.form['email']
     name_to_update.favorite_color = request.form['favorite_color']
     name_to_update.username = request.form['username']
+    name_to_update.about_author = request.form['about_author']
 
     try:
       db.session.commit()
@@ -255,7 +279,45 @@ def delete(id):
 @login_required
 def dashboard():
   form = UserForm()
-  return render_template('dashboard.html', form=form)
+  id = current_user.id
+  name_to_update = Users.query.get_or_404(id)
+  if request.method == "POST":
+    name_to_update.name = request.form['name']
+    name_to_update.email = request.form['email']
+    name_to_update.favorite_color = request.form['favorite_color']
+    name_to_update.username = request.form['username']
+    name_to_update.about_author = request.form['about_author']
+    name_to_update.profile_pic = request.files['profile_pic']
+   
+    # Grab Image Name
+    pic_filename = secure_filename(name_to_update.profile_pic.filename)
+
+    # Set UUID
+    pic_name = f"{str(uuid.uuid1())}_{pic_filename}"
+
+    # Save that Image
+    saver = request.files['profile_pic']
+
+    # change it to a string to save to db
+    name_to_update.profile_pic = pic_name
+
+    try:
+      db.session.commit()
+      saver.save(os.path.join(app.config['UPLOAD_FOLDER']), pic_name)
+      flash("User Updated Successfully!")
+      return render_template("dashboard.html", form=form)
+    except:
+      flash("Error! Please try again.")
+      return render_template("update.html", 
+        form=form,
+        name_to_update=name_to_update
+      )
+  else:
+    return render_template("dashboard.html", 
+      form=form,
+      name_to_update=name_to_update, 
+      id=id
+    )
 
 # Create a route decorator
 @app.route('/')
@@ -348,7 +410,9 @@ class Users(db.Model, UserMixin):
   name = db.Column(db.String(200), nullable=False)
   email = db.Column(db.String(200), nullable=False, unique=True)
   favorite_color = db.Column(db.String(120))
+  about_author = db.Column(db.Text(500), nullable=True)
   date_added = db.Column(db.DateTime, default=datetime.utcnow)
+  profile_pic = db.Column(db.String(8000), nullable=True)
   # Do some password stuff
   password_hash = db.Column(db.String(128), nullable=False)
   #User can Have Many Posts

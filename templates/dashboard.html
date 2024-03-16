@@ -8,20 +8,23 @@
   </div>
 {% endfor %}
 {% if current_user.is_authenticated %}
-  <h2 class="mb-5">Welcome to User Dashboard</h2>
-  
   <div class="container d-flex flex-column align-items-center">
     <div class="card w-50">
       <div class="card-header">
         <h3 class="text-secondary text-center">{{ current_user.username|upper }}</h3>
       </div>
-      <div class="card-body">
-        <p class="card-text p-3">
+      <div class="card-body row">
+        <p class="card-text p-4 d-flex flex-column justify-content-center col-12 col-md-9">
           <strong class="d-block mb-2">Name: {{ current_user.name }}</strong>
           <strong class="d-block mb-2">Email: {{ current_user.email }}</strong>
           <strong class="d-block mb-2">Favorite Color: {{ current_user.favorite_color }}</strong>
+          <strong class="d-block mb-2">About Author: <br /><span class="p-5">{{ current_user.about_author }}</span></strong>
+          <strong class="d-block mb-2">{{ current_user.profile_pic }}</strong>
           <strong class="d-block mb-2">Date Join: {{ current_user.date_added }}</strong>
         </p>
+        <div class="w-25 col-12 col-md-3">
+          <img src="{{ url_for('static', filename='images/han.jpg')}}" class="w-100 shadow">
+        </div>
       </div>
       <div class="card-footer d-flex justify-content-between">
         <a href="{{ url_for('update', id=current_user.id)}}" class="btn btn-outline-secondary w-50">Update Profile</a>
@@ -35,7 +38,7 @@
         <h3 class="text-secondary text-center">UPDATE FORM</h3>
       </div>
       <div class="card-body opcity-0">
-        <form action="/update/{{current_user.id}}" method="POST" class="p-2">
+        <form action="/dashboard" method="POST" enctype="multipart/form-data" class="p-2">
           {{ form.hidden_tag() }}
         
           {{ form.name.label(class="form-label") }}
@@ -49,6 +52,12 @@
         
           {{ form.favorite_color.label(class="form-label") }}
           {{ form.favorite_color(class="form-control mb-3", value=current_user.favorite_color) }}
+
+          {{ form.about_author.label(class="form-label") }}
+          <textarea name="about_author" rows="7" class="form-control">{{ current_user.about_author }}</textarea>
+
+          {{ form.profile_pic.label(class="form-label") }}
+          {{ form.profile_pic(class="form-control mb-3", value=current_user.profile_pic) }}
         
           {{ form.submit(class="btn btn-outline-secondary w-100 mt-2 p-2") }}
         </form>
