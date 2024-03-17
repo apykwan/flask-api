@@ -19,11 +19,16 @@
           <strong class="d-block mb-2">Email: {{ current_user.email }}</strong>
           <strong class="d-block mb-2">Favorite Color: {{ current_user.favorite_color }}</strong>
           <strong class="d-block mb-2">About Author: <br /><span class="p-5">{{ current_user.about_author }}</span></strong>
-          <strong class="d-block mb-2">{{ current_user.profile_pic }}</strong>
+          <strong class="d-block mb-2">Profile Photo: {{ current_user.profile_pic }}</strong>
           <strong class="d-block mb-2">Date Join: {{ current_user.date_added }}</strong>
         </p>
         <div class="w-25 col-12 col-md-3">
-          <img src="{{ url_for('static', filename='images/han.jpg')}}" class="w-100 shadow">
+          {% if current_user.profile_pic %}
+            <img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" class="w-100 shadow">
+          {% else %}
+            <img src="{{ url_for('static', filename='images/han.jpg')}}" class="w-100 shadow">
+          {% endif %}
+          
         </div>
       </div>
       <div class="card-footer d-flex justify-content-between">
@@ -57,8 +62,8 @@
           <textarea name="about_author" rows="7" class="form-control">{{ current_user.about_author }}</textarea>
 
           {{ form.profile_pic.label(class="form-label") }}
-          {{ form.profile_pic(class="form-control mb-3", value=current_user.profile_pic) }}
-        
+          {{ form.profile_pic(class="form-control mb-3") }}
+          
           {{ form.submit(class="btn btn-outline-secondary w-100 mt-2 p-2") }}
         </form>
       </div>

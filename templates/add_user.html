@@ -26,7 +26,9 @@
         <td><a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.name }}</a></td>
         <td><a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.email }}</a></td>
         <td><a href="{{ url_for('update', id=our_user.id) }}">{{ our_user.favorite_color }}</a></td>
-        <td><a href="{{ url_for('delete', id=our_user.id) }}"><button class="btn btn-danger">X</button></a></td>
+        {% if current_user.id == our_user %}
+          <td><a href="{{ url_for('delete', id=our_user.id) }}"><button class="btn btn-danger">X</button></a></td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>

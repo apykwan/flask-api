@@ -12,13 +12,34 @@
       <h3 class="card-title">{{ post.title }}</h3>
       <h6 class="card-subtitle mb-4 text-muted">{{ post.slug }}</h6>
       <p class="card-text flex-grow-1 bg-body">{{ post.content|safe }}</p>
-      
-      {% if post.poster.about_author %}
-        <quoteblock class="text-lead p-1 text-truncate">
-          "{{ post.poster.about_author }}"
-        </quoteblock>
-      {% endif %}
-      <small class="d-flex justify-content-end text-primary">By {{ post.poster.name|capitalize }}</small>
+
+      <div class="card mb-3">
+        <div class="row no-gutters">
+          <div class="col-md-2">
+            {% if post.poster.profile_pic %}
+              <img src="{{ url_for('static', filename='images/' + post.poster.profile_pic)}}" width="150"align="left" >
+            {% else %}
+              <img src="{{ url_for('static', filename='images/han.jpg')}}" width="150" align="left">
+            {% endif %}
+          </div>
+          <div class="col-md-10">
+            <div class="card-body">
+              <h5 class="card-title">
+                {{ post.poster.name}}
+              </h5>
+              <p class="card-text">
+                {% if post.poster.about_author %}
+                  <quoteblock class="text-lead p-1 text-truncate">
+                    "{{ post.poster.about_author }}"
+                  </quoteblock>
+                {% else %}
+                  <p clas="text-danger">[deleted]</p>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

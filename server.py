@@ -260,19 +260,24 @@ def update(id):
 
 # Delete Database Record
 @app.route('/delete/<id>')
+@login_required
 def delete(id):
-  form = UserForm()
-  user_to_delete = Users.query.get_or_404(id)
+  if id == current_user.id:
+    form = UserForm()
+    user_to_delete = Users.query.get_or_404(id)
 
-  try:
-    db.session.delete(user_to_delete)
-    db.session.commit()
-    flash("User Deleted Successfully!")
-    our_users = Users.query.order_by(Users.date_added)
-    return render_template("add_user.html", form=form, name=name, our_users=our_users)
-  except:
-    flash("User Deleted Failed!")
-    return render_template("add_user.html", form=form, name=name, our_users=our_users)
+    try:
+      db.session.delete(user_to_delete)
+      db.session.commit()
+      flash("User Deleted Successfully!")
+      our_users = Users.query.order_by(Users.date_added)
+      return render_template("add_user.html", form=form, name=name, our_users=our_users)
+    except:
+      flash("User Deleted Failed!")
+      return render_template("add_user.html", form=form, name=name, our_users=our_users)
+  else:
+    flash("Sorry, you can't delete this user!")
+    return redirect(url_for('dashboard'))
   
 # Create Dashboard Page
 @app.route('/dashboard', methods=['GET', 'POST'])
@@ -281,36 +286,51 @@ def dashboard():
   form = UserForm()
   id = current_user.id
   name_to_update = Users.query.get_or_404(id)
+  curr_image = name_to_update.profile_pic
   if request.method == "POST":
     name_to_update.name = request.form['name']
     name_to_update.email = request.form['email']
     name_to_update.favorite_color = request.form['favorite_color']
     name_to_update.username = request.form['username']
     name_to_update.about_author = request.form['about_author']
-    name_to_update.profile_pic = request.files['profile_pic']
-   
-    # Grab Image Name
-    pic_filename = secure_filename(name_to_update.profile_pic.filename)
+    name_to_update.profile_pic = request.files['profile_pic'] if request.files['profile_pic'] else name_to_update.profile_pic
 
-    # Set UUID
-    pic_name = f"{str(uuid.uuid1())}_{pic_filename}"
+    # Check for profile pic
+    if request.files['profile_pic']:
+      if curr_image:
+        os.remove(f"static/images/{curr_image}") 
+      name_to_update.profile_pic = request.files['profile_pic']
 
-    # Save that Image
-    saver = request.files['profile_pic']
+      # Grab Image Name
+      pic_filename = secure_filename(name_to_update.profile_pic.filename)
 
-    # change it to a string to save to db
-    name_to_update.profile_pic = pic_name
+      # Set UUID
+      pic_name = f"{str(uuid.uuid1())}_{pic_filename}"
 
-    try:
+      # Save that Image
+      saver = request.files['profile_pic']
+
+      # change it to a string to save to db
+      name_to_update.profile_pic = pic_name
+
+      try:
+        db.session.commit()
+        saver.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+        flash("User Updated Successfully!")
+        return render_template("dashboard.html", form=form)
+      except:
+        flash("Error! Please try again.")
+        return render_template("update.html", 
+          form=form,
+          name_to_update=name_to_update
+        )
+    else:
       db.session.commit()
-      saver.save(os.path.join(app.config['UPLOAD_FOLDER']), pic_name)
       flash("User Updated Successfully!")
-      return render_template("dashboard.html", form=form)
-    except:
-      flash("Error! Please try again.")
-      return render_template("update.html", 
-        form=form,
-        name_to_update=name_to_update
+      return render_template(
+        "dashboard.html",
+         form=form, 
+         name_to_update=name_to_update
       )
   else:
     return render_template("dashboard.html", 
