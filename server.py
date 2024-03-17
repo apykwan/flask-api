@@ -9,6 +9,7 @@ from flask_login import UserMixin, login_user, login_required, LoginManager, log
 from flask_ckeditor import CKEditor
 from webforms import UserForm, PostForm, LoginForm, NameForm, PasswordForm, SearchForm
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 import uuid as uuid
 import os
 
@@ -18,17 +19,20 @@ app = Flask(__name__)
 # Add CKEditor
 ckeditor = CKEditor(app)
 
-# Add Database
+# load dotenv
+load_dotenv()
+
+# add database
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:taipei@localhost/users"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 
 # Secret Key
-app.config['SECRET_KEY'] = "my sECRet key blAh Blah blaH"
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+
+# upload image locally
+app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER")
+
 # Intialize the Database
-
-UPLOAD_FOLDER = 'static/images/'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 db = SQLAlchemy()
 db.init_app(app)
 migrate = Migrate(app, db)
